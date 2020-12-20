@@ -24,12 +24,12 @@ def lz77(src, size_buffer, k):
                     writer.writerow([alphabet, buffer, src[i:i + steps + 1], z, steps, buffer[steps]])
                 break
         if flag:
+            with open(f'lz77_{k}.csv', 'a', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow([alphabet, buffer, "-", "1", "0", src[i]])
             pack += src[i]
             alphabet += src[i]
             i += 1
-            with open(f'lz77_{k}.csv', 'a', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow([alphabet, buffer, "-", "1", "0", src[i - 1]])
     return pack
 
 
@@ -45,22 +45,21 @@ def lzss(src, size_buffer, k):
         buffer = src[i:i + size_buffer]
         for steps in range(size_buffer - 1, 1, -1):
             if alphabet.rfind(buffer[:steps]) != -1:
+                with open(f'lzss_{k}.csv', 'a', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow([alphabet, buffer, src[i:i + steps], 1, i - alphabet.rfind(buffer[:steps]), steps, "-"])
                 pack += f"{1, i - alphabet.rfind(buffer[:steps]), steps}"
-                z = i - alphabet.rfind(buffer[:steps])
                 alphabet += src[i:i + steps]
                 i += steps
                 flag = False
-                with open(f'lzss_{k}.csv', 'a', newline='') as f:
-                    writer = csv.writer(f)
-                    writer.writerow([alphabet, buffer, src[i:i + steps], 1, z, steps, "-"])
                 break
         if flag:
+            with open(f'lzss_{k}.csv', 'a', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow([alphabet, buffer, "-", "0", "-", "-", src[i]])
             pack += src[i]
             alphabet += src[i]
             i += 1
-            with open(f'lzss_{k}.csv', 'a', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow([alphabet, buffer, "-", "0", "-", "-", src[i - 1]])
     return pack
 
 
